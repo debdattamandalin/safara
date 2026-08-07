@@ -31,7 +31,8 @@ export function Onboarding() {
     emergencyContact: '',
     insurance: '',
     duration: '',
-    destination: ''
+    destination: '',
+    language: ''
   });
 
   useEffect(() => {
@@ -91,14 +92,14 @@ export function Onboarding() {
     <div className="h-full ambient-mesh-bg flex flex-col relative w-full">
       <div className="absolute inset-0 bg-background/20 backdrop-blur-[2px] pointer-events-none" />
 
-      {/* Modern Floating Header with Back Button */}
+        {/* Modern Floating Header with Back Button */}
       <div className="absolute top-0 left-0 right-0 pt-safe px-6 mt-4 z-[100] flex justify-between items-center">
         {step > 2 ? (
           <button 
             onClick={() => {
-              if (step === 7 && path === 'indian') setStep(5);
-              else if (path === 'indian' && step === 5) setStep(3);
-              else if (step === 4 && path === 'indian') setStep(3); // from digilocker mock
+              if (step === 8 && path === 'indian') setStep(6);
+              else if (path === 'indian' && step === 6) setStep(4);
+              else if (step === 5 && path === 'indian') setStep(4); // from digilocker mock
               else setStep(s => s - 1);
             }}
             className="p-3 bg-white/40 backdrop-blur-md rounded-full text-foreground/80 hover:bg-white/60 transition-colors shadow-sm"
@@ -157,8 +158,64 @@ export function Onboarding() {
           >
             <div className="bg-white/70 backdrop-blur-3xl border-t border-white/60 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] rounded-t-[40px] p-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] flex flex-col h-[85vh] w-full">
               
-              {/* STEP 2: WELCOME */}
+              {/* STEP 2: LANGUAGE SELECTION */}
               {step === 2 && (
+                <div className="flex flex-col h-full">
+                  <div className="text-center mb-6 pt-2">
+                    <h2 className="text-3xl font-serif text-foreground mb-2">Select Language</h2>
+                    <p className="text-muted-foreground text-xs px-2">Choose your preferred language for the app interface.</p>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto space-y-6 pb-4">
+                    <div>
+                      <h3 className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-3 px-1">Indian Languages</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        {['Hindi', 'Bengali', 'Telugu', 'Marathi', 'Tamil'].map(lang => (
+                          <button
+                            key={lang}
+                            onClick={() => updateData({ language: lang })}
+                            className={cn(
+                              "p-4 rounded-2xl border transition-all active:scale-95 text-left font-medium",
+                              data.language === lang ? "bg-foreground text-background border-foreground shadow-md" : "bg-white/50 border-white hover:bg-white/70 text-foreground"
+                            )}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-3 px-1">World Languages</h3>
+                      <div className="grid grid-cols-2 gap-3">
+                        {['English', 'Mandarin', 'Spanish', 'French', 'Arabic'].map(lang => (
+                          <button
+                            key={lang}
+                            onClick={() => updateData({ language: lang })}
+                            className={cn(
+                              "p-4 rounded-2xl border transition-all active:scale-95 text-left font-medium",
+                              data.language === lang ? "bg-foreground text-background border-foreground shadow-md" : "bg-white/50 border-white hover:bg-white/70 text-foreground"
+                            )}
+                          >
+                            {lang}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    disabled={!data.language}
+                    onClick={() => setStep(3)} 
+                    className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base disabled:opacity-30 disabled:active:scale-100 flex-shrink-0"
+                  >
+                    Continue
+                  </button>
+                </div>
+              )}
+
+              {/* STEP 3: WELCOME */}
+              {step === 3 && (
                 <div className="flex flex-col h-full">
                   <div className="flex-1 flex flex-col items-center text-center justify-center py-4">
                     <div className="bg-primary/5 p-4 rounded-full mb-6">
@@ -169,14 +226,14 @@ export function Onboarding() {
                       An official safety infrastructure protecting travelers across India.
                     </p>
                   </div>
-                  <button onClick={() => setStep(3)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-6 active:scale-95 transition-transform text-base shadow-xl">
+                  <button onClick={() => setStep(4)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-6 active:scale-95 transition-transform text-base shadow-xl">
                     Get Started
                   </button>
                 </div>
               )}
 
-              {/* STEP 3: SELECT CITIZEN TYPE */}
-              {step === 3 && (
+              {/* STEP 4: SELECT CITIZEN TYPE */}
+              {step === 4 && (
                 <div className="flex flex-col h-full">
                   <div className="text-center mb-10 pt-2">
                     <h2 className="text-3xl font-serif text-foreground mb-2">Who are you?</h2>
@@ -185,7 +242,7 @@ export function Onboarding() {
                   
                   <div className="flex-1 flex flex-col gap-4">
                     <button 
-                      onClick={() => { setPath('indian'); setStep(4); }}
+                      onClick={() => { setPath('indian'); setStep(5); }}
                       className="p-6 bg-white/50 backdrop-blur-xl border border-white rounded-3xl flex flex-col items-center text-center gap-4 hover:bg-white/70 active:scale-95 transition-all shadow-sm"
                     >
                       <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center">
@@ -198,7 +255,7 @@ export function Onboarding() {
                     </button>
 
                     <button 
-                      onClick={() => { setPath('international'); setStep(4); }}
+                      onClick={() => { setPath('international'); setStep(5); }}
                       className="p-6 bg-white/50 backdrop-blur-xl border border-white rounded-3xl flex flex-col items-center text-center gap-4 hover:bg-white/70 active:scale-95 transition-all shadow-sm"
                     >
                       <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center">
@@ -213,8 +270,8 @@ export function Onboarding() {
                 </div>
               )}
 
-              {/* STEP 4 (INDIAN): DIGILOCKER */}
-              {step === 4 && path === 'indian' && (
+              {/* STEP 5 (INDIAN): DIGILOCKER */}
+              {step === 5 && path === 'indian' && (
                 <div className="flex flex-col h-full">
                   <div className="text-center mb-6 pt-2">
                     <h2 className="text-3xl font-serif text-foreground mb-2">Verify Identity</h2>
@@ -241,8 +298,8 @@ export function Onboarding() {
                 </div>
               )}
 
-              {/* STEP 4 (INTERNATIONAL): IDENTITY FORM */}
-              {step === 4 && path === 'international' && (
+              {/* STEP 5 (INTERNATIONAL): IDENTITY FORM */}
+              {step === 5 && path === 'international' && (
                 <div className="flex flex-col h-full">
                   <div className="text-center mb-6 pt-2">
                     <h2 className="text-3xl font-serif text-foreground mb-2">Traveler Identity</h2>
@@ -270,14 +327,14 @@ export function Onboarding() {
                     </div>
                   </div>
                   
-                  <button disabled={!data.name || !data.passport || !data.dob || !data.nationality} onClick={() => setStep(5)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base disabled:opacity-30 disabled:active:scale-100 flex-shrink-0">
+                  <button disabled={!data.name || !data.passport || !data.dob || !data.nationality} onClick={() => setStep(6)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base disabled:opacity-30 disabled:active:scale-100 flex-shrink-0">
                     Continue
                   </button>
                 </div>
               )}
 
-              {/* STEP 5: MEDICAL PROFILE (BOTH PATHS) */}
-              {step === 5 && (
+              {/* STEP 6: MEDICAL PROFILE (BOTH PATHS) */}
+              {step === 6 && (
                 <div className="flex flex-col h-full">
                   <div className="text-center mb-6 pt-2">
                     <h2 className="text-3xl font-serif text-foreground mb-2">Emergency Profile</h2>
@@ -312,14 +369,14 @@ export function Onboarding() {
                     </div>
                   </div>
                   
-                  <button onClick={() => path === 'international' ? setStep(6) : setStep(7)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
+                  <button onClick={() => path === 'international' ? setStep(7) : setStep(8)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
                     {path === 'indian' ? 'Continue' : 'Continue'}
                   </button>
                 </div>
               )}
 
-              {/* STEP 6: INTERNATIONAL TRAVEL DETAILS */}
-              {step === 6 && path === 'international' && (
+              {/* STEP 7: INTERNATIONAL TRAVEL DETAILS */}
+              {step === 7 && path === 'international' && (
                 <div className="flex flex-col h-full">
                   <div className="text-center mb-6 pt-2">
                     <h2 className="text-3xl font-serif text-foreground mb-2">Travel Details</h2>
@@ -341,14 +398,14 @@ export function Onboarding() {
                     </div>
                   </div>
                   
-                  <button onClick={() => setStep(7)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
+                  <button onClick={() => setStep(8)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
                     Continue
                   </button>
                 </div>
               )}
 
-              {/* STEP 7: PERMISSIONS */}
-              {step === 7 && (
+              {/* STEP 8: PERMISSIONS */}
+              {step === 8 && (
                 <div className="flex flex-col h-full">
                   <div className="text-center mb-6 pt-2">
                     <h2 className="text-3xl font-serif text-foreground mb-2">System Permissions</h2>
