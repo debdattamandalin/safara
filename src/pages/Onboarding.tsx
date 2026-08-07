@@ -353,11 +353,21 @@ export function Onboarding() {
                     )}
                     
                     <div>
-                      <label className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2 block">Blood Type</label>
-                      <select value={data.bloodType} onChange={e => updateData({ bloodType: e.target.value })} className="w-full bg-transparent border-b-2 border-foreground/10 pb-2 outline-none focus:border-foreground transition-colors font-serif text-2xl appearance-none text-foreground rounded-none px-0">
-                        <option value="">Select</option>
-                        {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(type => <option key={type} value={type}>{type}</option>)}
-                      </select>
+                      <label className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-3 block">Blood Type</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => updateData({ bloodType: type })}
+                            className={cn(
+                              "py-3 rounded-xl border transition-all active:scale-95 text-center font-bold text-lg",
+                              data.bloodType === type ? "bg-foreground text-background border-foreground shadow-md" : "bg-white/50 border-white hover:bg-white/70 text-foreground"
+                            )}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div>
                       <label className="text-xs font-bold text-foreground/60 uppercase tracking-widest mb-2 block mt-6">Conditions & Allergies</label>
