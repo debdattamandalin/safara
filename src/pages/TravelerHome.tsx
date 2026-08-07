@@ -115,20 +115,33 @@ export function TravelerHome() {
     
     setIsTracking(true);
     
-    // Initial position
+    // Attempt to load last known position immediately for smooth tab switching
+    const lastLat = localStorage.getItem('safara_last_lat');
+    const lastLng = localStorage.getItem('safara_last_lng');
+    if (lastLat && lastLng) {
+      const pLat = parseFloat(lastLat);
+      const pLng = parseFloat(lastLng);
+      if (!isNaN(pLat) && !isNaN(pLng)) {
+        updatePosition(pLat, pLng);
+      }
+    }
+
     try {
-      const pos = await Geolocation.getCurrentPosition();
-      updatePosition(pos.coords.latitude, pos.coords.longitude);
-      
-      // Watch position
-      const id = await Geolocation.watchPosition({ enableHighAccuracy: true }, (pos, err) => {
-        if (pos) updatePosition(pos.coords.latitude, pos.coords.longitude);
+      // Watch position (this runs continuously and pushes updates)
+      const id = await Geolocation.watchPosition({ enableHighAccuracy: true, maximumAge: 10000 }, (pos, err) => {
+        if (pos) {
+          updatePosition(pos.coords.latitude, pos.coords.longitude);
+          localStorage.setItem('safara_last_lat', pos.coords.latitude.toString());
+          localStorage.setItem('safara_last_lng', pos.coords.longitude.toString());
+        }
       });
       setWatchId(id);
     } catch (e) {
-      console.warn("Geolocation failed, using fallback coordinates", e);
-      // Fallback for desktop testing if GPS is blocked
-      updatePosition(51.515, -0.09); // Slightly north of danger zone
+      console.warn("Geolocation failed", e);
+      // Only fallback to London for desktop testing
+      if (!Capacitor.isNativePlatform() && !lastLat) {
+        updatePosition(51.515, -0.09); // Slightly north of danger zone
+      }
     }
   };
 

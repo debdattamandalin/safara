@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, ChevronLeft, Fingerprint, 
-  MapPin, UserSquare2, Globe, HeartPulse, ShieldCheck, Bell
+  MapPin, UserSquare2, Globe, HeartPulse, ShieldCheck, Bell, CheckCircle2
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Capacitor } from '@capacitor/core';
