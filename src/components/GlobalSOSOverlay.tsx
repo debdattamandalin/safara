@@ -3,6 +3,7 @@ import { ShieldAlert, AlertTriangle, PhoneCall } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { MockBackend } from '../lib/mockBackend';
+import { playSiren, stopSiren, initAudio } from '../lib/utils';
 
 interface GlobalSOSOverlayProps {
   onClose: () => void;
@@ -14,6 +15,9 @@ export function GlobalSOSOverlay({ onClose }: GlobalSOSOverlayProps) {
   const [digitalId, setDigitalId] = useState<any>(null);
 
   useEffect(() => {
+    // Unlock audio context on mount for immediate tap compatibility
+    initAudio();
+    
     const hash = localStorage.getItem('safara_digital_id');
     const dataStr = localStorage.getItem('safara_user_data');
     if (hash && dataStr) {
@@ -23,6 +27,12 @@ export function GlobalSOSOverlay({ onClose }: GlobalSOSOverlayProps) {
         console.error("Failed to parse user data", e);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      stopSiren();
+    };
   }, []);
 
   useEffect(() => {
@@ -36,6 +46,7 @@ export function GlobalSOSOverlay({ onClose }: GlobalSOSOverlayProps) {
   }, [sosState, countdown]);
 
   const handleSOSClick = () => {
+    initAudio(); // Unlock audio on direct user interaction
     if (sosState === 'idle') {
       if (!digitalId) {
         alert("Please complete onboarding to create a Digital ID.");
@@ -55,6 +66,9 @@ export function GlobalSOSOverlay({ onClose }: GlobalSOSOverlayProps) {
 
   const executeSOS = async () => {
     setSosState('active');
+
+    // Siren Logic
+    playSiren();
 
     try {
       let lat = 51.505;

@@ -17,12 +17,12 @@ export function TravelerLayout() {
   return (
     <div className="h-full flex flex-col bg-transparent text-foreground relative w-full">
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto relative pb-28">
+      <main className={cn("flex-1 overflow-y-auto relative", location.pathname !== '/' && "pb-28")}>
         <Outlet />
       </main>
 
       {/* Floating Bottom Navigation */}
-      <nav className="fixed bottom-0 left-6 right-6 z-50 mb-safe">
+      <nav className="fixed bottom-0 left-6 right-6 z-[1000] mb-safe">
         <div className="bg-card/70 backdrop-blur-2xl border border-border/50 shadow-2xl rounded-[32px] px-4 py-3 flex justify-between items-center">
           {navItems.map((item) => {
             if (item.name === 'SOS') {

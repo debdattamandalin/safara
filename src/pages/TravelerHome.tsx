@@ -4,7 +4,7 @@ import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
 import { ShieldAlert, Navigation, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { MockBackend, type TravelerLocation } from '../lib/mockBackend';
-import { cn } from '../lib/utils';
+import { cn, playSiren, stopSiren, initAudio } from '../lib/utils';
 import L from 'leaflet';
 
 // Fix leaflet default icon issue in React
@@ -62,7 +62,18 @@ export function TravelerHome() {
         console.error("Failed to parse user data", e);
       }
     }
+
+    return () => {
+      stopSiren();
+    };
   }, []);
+
+  useEffect(() => {
+    // Auto-start tracking when Digital ID is loaded and not currently tracking
+    if (digitalId && !isTracking) {
+      startJourney();
+    }
+  }, [digitalId, isTracking]);
 
   const updatePosition = (lat: number, lng: number) => {
     setPosition([lat, lng]);
@@ -130,8 +141,10 @@ export function TravelerHome() {
   };
 
   const triggerSOS = () => {
+    initAudio(); // Unlock audio on direct user interaction
     if (!digitalId || !position) return alert("Please create a Digital ID and ensure GPS is active first.");
     setSosActive(true);
+    playSiren();
     MockBackend.triggerIncident({
       id: `inc_${Date.now()}`,
       travelerId: digitalId.hash,
@@ -245,38 +258,7 @@ export function TravelerHome() {
           </div>
         )}
 
-        {/* Floating Action Buttons */}
-        <div className="absolute bottom-28 left-6 right-6 z-[400] flex flex-col gap-4 max-w-sm mx-auto">
-          {!isTracking ? (
-            <button 
-              onClick={startJourney}
-              className="w-full h-16 bg-primary text-primary-foreground rounded-full shadow-2xl shadow-primary/30 font-bold flex items-center justify-center gap-3 text-lg hover:scale-105 active:scale-95 transition-all"
-            >
-              <Navigation className="w-6 h-6 fill-primary-foreground" /> Start Journey
-            </button>
-          ) : (
-            <>
-              <button 
-                onClick={triggerSOS}
-                disabled={sosActive}
-                className={cn(
-                  "w-full h-16 rounded-full font-bold flex items-center justify-center gap-3 text-lg transition-all active:scale-95",
-                  sosActive 
-                    ? "bg-destructive/10 text-destructive border-2 border-destructive/20" 
-                    : "bg-destructive text-white hover:bg-destructive/90 shadow-2xl shadow-destructive/40"
-                )}
-              >
-                <ShieldAlert className="w-6 h-6" /> {sosActive ? "SOS SENT" : "EMERGENCY SOS"}
-              </button>
-              <button 
-                onClick={stopJourney}
-                className="w-full h-14 bg-card/90 backdrop-blur-xl border border-border/50 shadow-xl text-foreground rounded-full font-bold flex items-center justify-center hover:bg-card active:scale-95 transition-all"
-              >
-                End Journey
-              </button>
-            </>
-          )}
-        </div>
+
       </div>
     </div>
   );
