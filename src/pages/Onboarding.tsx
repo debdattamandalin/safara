@@ -8,6 +8,7 @@ import {
 import { cn } from '../lib/utils';
 import { Capacitor } from '@capacitor/core';
 import { Geolocation } from '@capacitor/geolocation';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 type OnboardingPath = 'none' | 'indian' | 'international';
 
@@ -388,7 +389,10 @@ export function Onboarding() {
                     <button 
                       onClick={async () => {
                         try {
-                          if ('Notification' in window) {
+                          if (Capacitor.isNativePlatform()) {
+                            const status = await LocalNotifications.requestPermissions();
+                            if (status.display === 'granted') setNotificationsGranted(true);
+                          } else if ('Notification' in window) {
                             const status = await Notification.requestPermission();
                             if (status === 'granted') setNotificationsGranted(true);
                           } else {
