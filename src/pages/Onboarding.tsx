@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Shield, ChevronLeft, Fingerprint, 
-  MapPin, UserSquare2, Globe, HeartPulse, ShieldCheck
+  MapPin, UserSquare2, Globe, HeartPulse, ShieldCheck, Bell
 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { Capacitor } from '@capacitor/core';
+import { Geolocation } from '@capacitor/geolocation';
 
 type OnboardingPath = 'none' | 'indian' | 'international';
 
@@ -14,6 +16,8 @@ export function Onboarding() {
   const [step, setStep] = useState(1);
   const [path, setPath] = useState<OnboardingPath>('none');
   const [isSimulatingDigilocker, setIsSimulatingDigilocker] = useState(false);
+  const [locationGranted, setLocationGranted] = useState(false);
+  const [notificationsGranted, setNotificationsGranted] = useState(false);
   
   const [data, setData] = useState({
     name: '',
@@ -91,7 +95,8 @@ export function Onboarding() {
         {step > 2 ? (
           <button 
             onClick={() => {
-              if (path === 'indian' && step === 5) setStep(3);
+              if (step === 7 && path === 'indian') setStep(5);
+              else if (path === 'indian' && step === 5) setStep(3);
               else if (step === 4 && path === 'indian') setStep(3); // from digilocker mock
               else setStep(s => s - 1);
             }}
@@ -306,8 +311,8 @@ export function Onboarding() {
                     </div>
                   </div>
                   
-                  <button onClick={() => path === 'international' ? setStep(6) : finishOnboarding()} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
-                    {path === 'indian' ? 'Finish Registration' : 'Continue'}
+                  <button onClick={() => path === 'international' ? setStep(6) : setStep(7)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
+                    {path === 'indian' ? 'Continue' : 'Continue'}
                   </button>
                 </div>
               )}
@@ -335,7 +340,86 @@ export function Onboarding() {
                     </div>
                   </div>
                   
-                  <button onClick={finishOnboarding} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
+                  <button onClick={() => setStep(7)} className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0">
+                    Continue
+                  </button>
+                </div>
+              )}
+
+              {/* STEP 7: PERMISSIONS */}
+              {step === 7 && (
+                <div className="flex flex-col h-full">
+                  <div className="text-center mb-6 pt-2">
+                    <h2 className="text-3xl font-serif text-foreground mb-2">System Permissions</h2>
+                    <p className="text-muted-foreground text-xs px-2">Safara requires certain permissions to function as a National Tourist Safety infrastructure.</p>
+                  </div>
+                  
+                  <div className="space-y-4 flex-1 mt-4">
+                    <button 
+                      onClick={async () => {
+                        try {
+                          if (Capacitor.isNativePlatform()) {
+                            const status = await Geolocation.requestPermissions();
+                            if (status.location === 'granted') setLocationGranted(true);
+                          } else {
+                            await Geolocation.getCurrentPosition();
+                            setLocationGranted(true);
+                          }
+                        } catch(e) { console.warn(e); }
+                      }}
+                      className={cn(
+                        "w-full text-left p-4 rounded-3xl flex gap-4 items-start border transition-all active:scale-95",
+                        locationGranted 
+                          ? "bg-emerald-500/10 border-emerald-500/30" 
+                          : "bg-foreground/5 border-foreground/10 hover:bg-foreground/10"
+                      )}
+                    >
+                      <div className={cn("p-3 rounded-full shrink-0 transition-colors", locationGranted ? "bg-emerald-500/20" : "bg-primary/20")}>
+                        {locationGranted ? <ShieldCheck className="w-6 h-6 text-emerald-600" /> : <MapPin className="w-6 h-6 text-primary" />}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-foreground mb-1">Live Location Tracking</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {locationGranted ? "Permission granted." : "Tap to allow continuous safety monitoring and instant SOS response."}
+                        </p>
+                      </div>
+                    </button>
+
+                    <button 
+                      onClick={async () => {
+                        try {
+                          if ('Notification' in window) {
+                            const status = await Notification.requestPermission();
+                            if (status === 'granted') setNotificationsGranted(true);
+                          } else {
+                            setNotificationsGranted(true); // Fallback for unsupported browsers
+                          }
+                        } catch(e) { console.warn(e); }
+                      }}
+                      className={cn(
+                        "w-full text-left p-4 rounded-3xl flex gap-4 items-start border transition-all active:scale-95",
+                        notificationsGranted 
+                          ? "bg-emerald-500/10 border-emerald-500/30" 
+                          : "bg-foreground/5 border-foreground/10 hover:bg-foreground/10"
+                      )}
+                    >
+                      <div className={cn("p-3 rounded-full shrink-0 transition-colors", notificationsGranted ? "bg-emerald-500/20" : "bg-primary/20")}>
+                        {notificationsGranted ? <ShieldCheck className="w-6 h-6 text-emerald-600" /> : <Bell className="w-6 h-6 text-primary" />}
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-foreground mb-1">Safety Notifications</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {notificationsGranted ? "Permission granted." : "Tap to allow danger zone alerts and emergency broadcasts."}
+                        </p>
+                      </div>
+                    </button>
+                  </div>
+                  
+                  <button 
+                    disabled={!locationGranted || !notificationsGranted}
+                    onClick={finishOnboarding} 
+                    className="w-full bg-[#111111] text-white font-medium h-14 rounded-full mt-2 shadow-xl active:scale-95 transition-transform text-base flex-shrink-0 disabled:opacity-30 disabled:active:scale-100"
+                  >
                     Finish Registration
                   </button>
                 </div>
