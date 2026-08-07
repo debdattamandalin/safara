@@ -23,17 +23,17 @@ export function TravelerLayout() {
 
       {/* Floating Bottom Navigation */}
       <nav className="fixed bottom-0 left-6 right-6 z-[1000] mb-safe">
-        <div className="bg-card/70 backdrop-blur-2xl border border-border/50 shadow-2xl rounded-[32px] px-4 py-3 flex justify-between items-center">
+        <div className="bg-card/70 backdrop-blur-2xl border border-border/50 shadow-2xl rounded-[32px] px-2 py-2 flex justify-around items-center">
           {navItems.map((item) => {
             if (item.name === 'SOS') {
               return (
                 <button
                   key={item.name}
                   onClick={() => setShowSOS(true)}
-                  className="flex items-center gap-2 px-4 py-3 rounded-full transition-all duration-300 text-destructive hover:bg-destructive/10"
+                  className="flex flex-col items-center justify-center gap-1 w-20 py-2 rounded-2xl transition-all duration-300 text-destructive hover:bg-destructive/10"
                 >
-                  <item.icon className="w-5 h-5 stroke-[2.5px]" />
-                  <span className="text-sm font-bold tracking-tight block">
+                  <item.icon className="w-6 h-6 stroke-[2.5px]" />
+                  <span className="text-[10px] uppercase font-bold tracking-wider">
                     {item.name}
                   </span>
                 </button>
@@ -49,16 +49,16 @@ export function TravelerLayout() {
                 key={item.name}
                 to={item.path}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-3 rounded-full transition-all duration-300",
+                  "flex flex-col items-center justify-center gap-1 w-20 py-2 rounded-2xl transition-all duration-300",
                   isActive 
-                    ? "bg-foreground text-primary-foreground shadow-lg scale-105" 
+                    ? "text-foreground" 
                     : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
                 )}
               >
-                <item.icon className={cn("w-5 h-5", isActive ? "stroke-[2.5px]" : "stroke-2")} />
+                <item.icon className={cn("w-6 h-6", isActive ? "stroke-[2.5px]" : "stroke-2")} />
                 <span className={cn(
-                  "text-sm font-bold tracking-tight transition-all duration-300",
-                  isActive ? "block" : "hidden"
+                  "text-[10px] font-bold tracking-wider transition-all duration-300",
+                  isActive ? "opacity-100" : "opacity-70"
                 )}>
                   {item.name}
                 </span>
