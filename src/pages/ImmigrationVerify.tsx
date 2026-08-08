@@ -4,7 +4,7 @@ import { ShieldCheck, QrCode, ScanLine, AlertTriangle, Loader2 } from 'lucide-re
 
 export function ImmigrationVerify() {
   const navigate = useNavigate();
-  const [isScanning, setIsScanning] = useState(false);
+  
   const [scanState, setScanState] = useState<'idle' | 'scanning' | 'verifying' | 'success' | 'failed'>('idle');
 
   const handleScan = () => {
@@ -19,7 +19,7 @@ export function ImmigrationVerify() {
         // Fetch local registration data
         const accountDataRaw = localStorage.getItem('safara_user_data');
         if (accountDataRaw) {
-          const accountData = JSON.parse(accountDataRaw);
+          JSON.parse(accountDataRaw);
           
           // Generate simulated Journey Data
           const journeyData = {

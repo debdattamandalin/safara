@@ -5,7 +5,7 @@ import '@fontsource/inter';
 
 export function InteractiveBackground({ children }: { children: React.ReactNode }) {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith("/dash");
+  const isDashboard = location.pathname.startsWith("/dash") || location.pathname.startsWith("/admin");
 
   return (
     <div className="h-[100dvh] w-full selection:bg-black selection:text-white flex flex-col font-body antialiased overflow-hidden bg-background">

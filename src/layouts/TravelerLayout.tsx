@@ -1,17 +1,19 @@
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Map, ShieldAlert, Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
 import { GlobalSOSOverlay } from '../components/GlobalSOSOverlay';
 
 export function TravelerLayout() {
   const [showSOS, setShowSOS] = React.useState(false);
   const location = useLocation();
+  const { t } = useTranslation();
 
   const navItems = [
-    { name: 'Journey', icon: Map, path: '/' },
+    { name: t('Home'), icon: Map, path: '/' },
     { name: 'SOS', icon: ShieldAlert, path: '/sos' },
-    { name: 'Settings', icon: Settings, path: '/settings' },
+    { name: t('Settings'), icon: Settings, path: '/settings' },
   ];
 
   return (

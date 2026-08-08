@@ -1,12 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TravelerLayout } from './layouts/TravelerLayout';
-import { AdminLayout } from './layouts/AdminLayout';
-
 import { TravelerHome } from './pages/TravelerHome';
 import { TravelerID } from './pages/TravelerID';
 import { TravelerSettings } from './pages/TravelerSettings';
-import { AdminDashboard } from './pages/AdminDashboard';
 import { Onboarding } from './pages/Onboarding';
 
 import { ImmigrationVerify } from './pages/ImmigrationVerify';
@@ -51,33 +48,25 @@ function App() {
   return (
     <BrowserRouter>
       <InteractiveBackground>
-        {isAdmin ? (
-          <Routes>
-            <Route path="/" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
-        ) : (
-          <Routes>
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/verify" element={
-              <RequireVerification>
-                <ImmigrationVerify />
-              </RequireVerification>
-            } />
-            <Route path="/" element={
-              <RequireOnboarding>
-                <TravelerLayout />
-              </RequireOnboarding>
-            }>
-              <Route index element={<TravelerHome />} />
-              <Route path="id" element={<TravelerID />} />
-              <Route path="settings" element={<TravelerSettings />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Route>
-          </Routes>
-        )}
+        <Routes>
+          {/* Traveler Routes */}
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/verify" element={
+            <RequireVerification>
+              <ImmigrationVerify />
+            </RequireVerification>
+          } />
+          <Route path="/" element={
+            <RequireOnboarding>
+              <TravelerLayout />
+            </RequireOnboarding>
+          }>
+            <Route index element={<TravelerHome />} />
+            <Route path="id" element={<TravelerID />} />
+            <Route path="settings" element={<TravelerSettings />} />
+          </Route>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </InteractiveBackground>
     </BrowserRouter>
   );
