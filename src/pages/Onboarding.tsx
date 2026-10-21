@@ -174,13 +174,22 @@ export function Onboarding() {
 
         {step > 1 && (
           <motion.div 
-            key={`step${step}`}
+            key="onboarding-modal"
             variants={slideVariants}
             initial="enter" animate="center" exit="exit"
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="absolute inset-0 flex flex-col justify-end z-10"
           >
-            <div className="bg-white/70 backdrop-blur-3xl border-t border-white/60 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] rounded-t-[40px] p-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] flex flex-col h-[85vh] w-full">
+            <div className="bg-white/70 backdrop-blur-3xl border-t border-white/60 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] rounded-t-[40px] flex flex-col h-[85vh] w-full relative overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`step-content-${step}`}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                  className="flex flex-col h-full w-full absolute inset-0 p-6 pb-[calc(env(safe-area-inset-bottom)+2rem)]"
+                >
               
               {/* STEP 2: WELCOME */}
               {step === 2 && (
@@ -633,6 +642,8 @@ export function Onboarding() {
                 </div>
               )}
 
+                </motion.div>
+              </AnimatePresence>
             </div>
           </motion.div>
         )}
